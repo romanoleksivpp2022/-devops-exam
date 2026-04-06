@@ -1,0 +1,42 @@
+name: Task2 - Ansible Setup
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_host:
+        description: 'Target host IP'
+        required: true
+        default: '164.92.242.105'
+
+jobs:
+  ansible:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/exam_key
+          chmod 600 ~/.ssh/exam_key
+
+      - name: Create inventory
+        run: |
+          echo "[nodes]" > task2/inventory_dynamic.ini
+          echo "${{ github.event.inputs.target_host }} ansible_user=root ansible_ssh_private_key_file=~/.ssh/exam_key ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> task2/inventory_dynamic.ini
+
+      - name: Ansible check (dry-run)
+        run: |
+          ansible-playbook -i task2/inventory_dynamic.ini task2/playbook.yml --check
+        continue-on-error: false
+
+      - name: Ansible apply
+        run: |
+          ansible-playbook -i task2/inventory_dynamic.ini task2/playbook.yml
