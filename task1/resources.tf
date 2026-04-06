@@ -1,7 +1,6 @@
-# SSH Key
-resource "digitalocean_ssh_key" "main" {
-  name       = "${var.prefix}-key"
-  public_key = var.ssh_public_key
+# SSH Key (existing)
+data "digitalocean_ssh_key" "main" {
+  name = "exam-key"
 }
 
 # VPC
@@ -79,7 +78,7 @@ resource "digitalocean_droplet" "main" {
   image    = "ubuntu-24-04-x64"
   region   = var.region
   vpc_uuid = digitalocean_vpc.main.id
-  ssh_keys = [digitalocean_ssh_key.main.fingerprint]
+  ssh_keys = [data.digitalocean_ssh_key.main.id]
 }
 
 # Spaces Bucket
