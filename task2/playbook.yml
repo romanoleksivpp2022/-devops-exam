@@ -33,6 +33,7 @@
         name: root
         groups: docker
         append: yes
+      ignore_errors: yes
 
     - name: Install kubectl
       shell: |
