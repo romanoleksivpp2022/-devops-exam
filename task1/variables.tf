@@ -15,3 +15,14 @@ variable "prefix" {
   type        = string
   default     = "oleksiv"
 }
+variable "spaces_access_key" {
+  description = "Spaces Access Key"
+  type        = string
+  sensitive   = true
+}
+
+variable "spaces_secret_key" {
+  description = "Spaces Secret Key"
+  type        = string
+  sensitive   = true
+}
